@@ -1,0 +1,25 @@
+const chocobowlStudy = {
+  subtitle: "통의 회전으로 초코볼을 모으는 2D 물리 인터랙션",
+  summary: "React와 Matter.js로 18개의 초코볼이 굴러가고 충돌하는 장면을 만들고, Canvas 2D로 금속 통과 초콜릿의 질감을 표현했습니다. 포인터·터치·슬라이더 입력을 통의 회전으로 연결하고, 중앙 그릇에 도달한 공을 수집해 점수와 짧은 시각 효과로 피드백합니다.",
+  stack: ["React", "Matter.js", "Canvas 2D", "Pointer Events", "requestAnimationFrame"],
+  goal: "버튼을 눌러 공을 직접 이동시키는 대신, 통을 기울이고 회전시켜 공의 움직임을 간접적으로 조절하는 놀이를 기획했습니다. 정사각형 통은 회전하지만 중앙 그릇은 고정되도록 분리하고, 초코볼의 무게감과 틴 케이스의 따뜻한 질감을 함께 표현했습니다.",
+  features: [
+    { title: "같은 중심을 공유하는 회전 통과 고정 그릇", text: "통은 네 개의 정적 사각형 충돌체로 구성하고, 매 프레임 회전 행렬로 각 벽의 위치와 각도를 갱신합니다. 그릇의 충돌체 두 개는 별도 객체로 유지하므로 통과 함께 회전하지 않습니다. 시각적인 통 역시 같은 중심과 각도로 Canvas에서 그려 충돌 영역과 방향을 맞춥니다." },
+    { title: "입력 보간과 접선 방향 속도 보정", text: "입력을 -1~1로 정규화하고 거듭제곱 곡선을 적용해 중앙 부근에서는 섬세하게, 가장자리에서는 크게 회전하도록 설정했습니다. 목표 각도까지 서서히 보간하고, 회전 속도와 중심으로부터의 거리를 이용해 공의 접선 방향 속도를 보정합니다. Matter.js의 충돌 계산에 조작감을 위한 수동 속도 보정을 더한 방식입니다." },
+    { title: "한 번만 수집되는 초코볼과 시각 피드백", text: "공의 중심이 그릇의 수집 영역에 들어오면 ID를 Set에 기록하고 물리 월드에서 제거합니다. 점수는 Set의 크기로 계산하며, 이미 수집된 공은 그리기와 후속 계산에서 제외합니다. 수집 순간 그릇 주변에 파동과 입자를 만들고, 입자는 수명이 끝나면 제거합니다." },
+    { title: "사진 없이 만드는 질감과 다중 입력", text: "금속 테두리와 안쪽 음각은 선형 그라디언트와 둥근 사각형으로, 초코볼은 방사형 그라디언트·그림자·하이라이트로 그립니다. 터치는 포인터 캡처로 이어받고, range 입력을 통해 키보드로도 통을 회전할 수 있습니다." },
+  ],
+  code: [
+    { title: "01 / 목표 각도까지 부드럽게 회전", source: "src/App.jsx · tick 발췌", language: "JavaScript", snippet: "const edge = Math.pow(Math.abs(input), 1.6)\n           * Math.sign(input);\nconst targetAngle = edge * Math.PI * 2;\nconst prevAngle = game.angle;\ngame.angle += (targetAngle - game.angle)\n            * Math.min(.075 * dt, 1);\nconst angularSpeed = (game.angle - prevAngle)\n                   / Math.max(dt, .1);", explanation: "각도는 포인터 위치에 즉시 맞추지 않고 현재 각도에서 목표 각도 방향으로 조금씩 이동합니다. dt를 반영해 프레임 간격에 따라 보간량을 조절하며, 실제로 움직인 각도의 차이는 이후 공의 속도를 보정하는 입력으로 사용합니다." },
+    { title: "02 / 회전 행렬로 네 벽의 위치와 방향 갱신", source: "src/App.jsx · walls.forEach 발췌", language: "JavaScript", snippet: "const [lx, ly, baseAngle] = local[i];\nconst c = Math.cos(game.angle);\nconst s = Math.sin(game.angle);\nBody.setPosition(wall, {\n  x: TRAY.x + lx * c - ly * s,\n  y: TRAY.y + lx * s + ly * c,\n});\nBody.setAngle(wall, baseAngle + game.angle);", explanation: "각 벽의 로컬 좌표를 회전한 뒤 통의 중심 좌표를 더해 월드 위치를 구합니다. 좌우 벽은 기본 각도가 π/2이므로 위치뿐 아니라 기본 방향에도 회전량을 더합니다. 벽은 정적 충돌체이며, 통 전체를 하나의 동적 강체로 시뮬레이션하는 구조는 아닙니다." },
+    { title: "03 / 중복 수집 없이 점수와 물리 객체 동기화", source: "src/App.jsx · 수집 판정 발췌", language: "JavaScript", snippet: "if (game.collected.has(ball.id)) continue;\nconst p = ball.position;\nif (Math.abs(p.x - BOWL.x) < 22\n    && p.y > BOWL.y - 7\n    && p.y < BOWL.y + 20) {\n  game.collected.add(ball.id);\n  Composite.remove(engine.world, ball);\n  const next = game.collected.size;\n  // 이 위치에서 파동과 입자도 생성합니다\n  setScore(next);\n}", explanation: "동일한 공을 다음 프레임에 다시 계산하지 않도록 먼저 Set을 확인합니다. 수집 후에는 물리 월드와 화면에서 공을 제외하고 점수만 React 상태로 반영합니다. 그릇 그림의 정확한 모양이 아니라 작은 사각형 영역에 공의 중심이 들어왔는지를 판정합니다. 예제의 주석은 입자 생성 부분을 생략했다는 표시입니다." },
+    { title: "04 / 화면 크기에 맞춰 동일한 조작 범위 사용", source: "src/App.jsx · handlePointerMove 발췌", language: "JavaScript", snippet: "const rect = e.currentTarget.getBoundingClientRect();\nsteer(((e.clientX - rect.left) / rect.width - .5) * 2);", explanation: "CSS로 게임판이 작아지더라도 화면상의 실제 너비로 포인터 위치를 나누므로 조작 범위는 항상 -1~1이 됩니다. steer 함수에서 범위를 제한하고, 시작 후 2초 동안은 입력을 잠가 초기 공들이 먼저 움직이며 자리를 잡도록 했습니다." },
+  ],
+  troubleshooting: [
+    { type: "실제 개선", title: "장식과 설명 때문에 한 화면에 들어오지 않던 구성", problem: "초기 리디자인에는 긴 제목, 설명, 푸터와 다시 시작 기능이 있어 화면이 길어졌습니다. 게임판과 조작부를 스크롤 없이 한 화면에서 볼 수 있도록 구성을 줄일 필요가 있었습니다.", solution: "제목과 점수판, 게임판, 슬라이더만 남겼습니다. 100dvh에서 헤더·컨트롤에 필요한 높이를 제외한 값과 화면 너비를 비교해 보드 크기를 결정하고, 낮은 화면에서는 간격과 테두리 두께도 줄였습니다.", result: "미리보기에서 스크롤바 없이 게임판과 슬라이더가 한 화면에 표시되는 것을 확인했습니다. 현재 버전에는 다시 시작 버튼과 완료 팝업을 두지 않습니다." },
+    { type: "예방 설계", title: "급격한 회전으로 공의 속도가 과도하게 커지지 않도록", problem: "정적 벽을 회전시키고 공에 접선 방향 속도를 더하는 구조에서는 큰 입력 변화가 공의 움직임을 과도하게 만들 수 있습니다.", solution: "목표 각도를 보간하고, 속도 보정에 사용하는 회전값은 -0.13~0.13, 공의 x·y 속도는 각각 -15~15로 제한했습니다. 엔진에 전달하는 프레임 간격도 상한을 두었습니다.", result: "회전 입력과 공의 속도 보정에 한계를 두어 조작감을 제어했습니다. 모든 조건에서 벽 관통을 방지하는 연속 충돌 검출을 구현한 것은 아닙니다." },
+    { type: "예방 설계", title: "멀리 벗어난 공 때문에 진행이 막히지 않도록", problem: "회전하는 얇은 벽과 큰 프레임 간격이 겹치면 공이 예상 범위를 벗어날 가능성이 있습니다. 공이 화면 밖에 남으면 나머지 점수를 모으기 어려워질 수 있습니다.", solution: "수집되지 않은 공이 캔버스 바깥의 여유 범위까지 벗어나면 좌우 시작 위치 근처로 되돌리고 속도를 0으로 설정합니다. 프레임 루프와 물리 월드는 컴포넌트 종료 시 함께 정리합니다.", result: "화면에서 멀리 벗어난 공이 계속 사라진 상태로 남지 않도록 복구 경로를 마련했습니다. 이 처리는 충돌 계산 자체를 정확하게 만드는 해결책과는 구분됩니다." },
+  ],
+  limits: "입체감은 Canvas 2D의 그라디언트와 그림자로 표현하며 3D 엔진은 사용하지 않습니다. 회전 통은 매 프레임 이동시키는 정적 벽으로 구성하고 공의 속도에는 조작용 보정을 더합니다. 수집한 공을 그릇 안에 다시 쌓는 물리 표현, 정밀한 용기 내부 판정, 재시작과 별도 완료 화면은 현재 구현 범위에 포함하지 않았습니다. 기기별 게임 난이도와 빠른 회전에서의 충돌 안정성은 추가 점검할 과제입니다.",
+};
+export default chocobowlStudy;

@@ -2,19 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Header } from "./Layout";
 import Subpage from "./Subpage";
+import ProjectStudy from "./ProjectStudy";
 import tteokwikiPreview from "./assets/tteokwiki-preview.png";
 import chocobowlPreview from "./assets/chocobowl-preview.png";
+import raindropPreview from "./assets/raindrop-preview.png";
+import formePreview from "./assets/forme-preview.png";
 const projects = [
-  { number: "01", title: "TEST", year: "2026", category: "WEB / JAVASCRIPT", image: tteokwikiPreview, imageAlt: "떡위키 메인 페이지 — 인기 떡과 추천 정보" },
-  { number: "02", title: "TEST", year: "2026", category: "GAME / JAVASCRIPT", image: chocobowlPreview, imageAlt: "CHOCOBOWL — 통을 회전시켜 초코볼을 담는 게임" },
-  { number: "03", title: "TEST", year: "2025", category: "WEB / REACT" },
-  { number: "04", title: "TEST", year: "2025", category: "INTERACTION / JS" },
+  { number: "01", title: "떡위키", description: "다양한 떡의 종류와 레시피, 보관법을 탐색하는 떡 정보 웹사이트", url: null, year: "2026", category: "WEB / JAVASCRIPT", image: tteokwikiPreview, imageAlt: "떡위키 메인 페이지 — 인기 떡과 추천 정보" },
+  { number: "02", title: "CHOCOBOWL", description: "Matter.js 충돌 계산과 Canvas 2D 렌더링으로 구현한 초코볼 게임 — 통의 회전·속도 보정·수집 판정으로 조작감을 설계", study: true, url: null, year: "2026", category: "GAME / JAVASCRIPT", image: chocobowlPreview, imageAlt: "CHOCOBOWL — 통을 회전시켜 초코볼을 담는 게임" },
+  { number: "03", title: "RAINDROP", description: "Three.js·GLSL로 표현한 수면 파문과 선택한 빗방울의 가속 낙하, Web Audio로 합성한 빗소리를 연결한 인터랙티브 웹 실험", study: true, url: "https://22561067-coder.github.io/raindrop/", year: "2025", category: "WEB / REACT", image: raindropPreview, imageAlt: "RAINDROP — 빗방울과 수면의 파문 인터랙션" },
+  { number: "04", title: "FORME", description: "순수 JavaScript와 CSS로 구현한 양방향 포스터 트랙·스크롤 반응·포스터 편집과 SVG 저장 기능을 갖춘 디자인 플레이그라운드", study: true, url: "https://22561067-coder.github.io/forme/", year: "2025", category: "INTERACTION / JS", image: formePreview, imageAlt: "FORME — 타이포그래피와 그래픽 포스터로 구성한 디자인 플레이그라운드" },
 ];
 const skills = [["HTML / CSS",35],["JAVASCRIPT",30],["REACT",25],["SVG",20],["UI / INTERACTION",55]];
 const motion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
 function Home() {
   const appRef = useRef(null);
   const trackRef = useRef(null);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [position, setPosition] = useState({ start: true, end: false });
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -73,13 +77,22 @@ function Home() {
             <button type="button" onClick={() => move(1)} disabled={position.end} aria-label="다음 프로젝트" aria-controls="project-track">→</button>
           </div></div>
           <div className="project-track" id="project-track" ref={trackRef} tabIndex={0} role="region" aria-label="프로젝트 목록. 좌우 방향키로 이동할 수 있습니다.">
-            {projects.map(project => <article className="project" key={project.number}>
-              <div className={`project-image${project.image ? " has-preview" : ""}`}>{project.image ? <img className="project-preview" src={project.image} alt={project.imageAlt} loading="lazy" width="2502" height="1418" /> : <><div className="image-grid"/><span className="project-number">{project.number}</span><span className="view-project">IN PROGRESS</span></>}</div>
+            {projects.map(project => <article className="project" key={project.number} tabIndex={0} aria-label={`${project.title} 프로젝트`} aria-describedby={`project-description-${project.number}`}>
+              <div className={`project-image${project.image ? " has-preview" : ""}`}>{project.image ? <img className="project-preview" src={project.image} alt={project.imageAlt} loading="lazy" width="2502" height="1418" /> : <><div className="image-grid"/><span className="project-number">{project.number}</span></>}
+                <div className="project-overlay">
+                  <span className="project-overlay-label">{project.study ? "DESIGN & DEVELOPMENT" : "ABOUT THE PROJECT"}</span>
+                  <h3>{project.title}</h3>
+                  <p id={`project-description-${project.number}`}>{project.description}</p>
+                  {project.study && <button className="project-study-open" type="button" onClick={() => setSelectedProject(project)} aria-haspopup="dialog">구현 과정 보기 <span aria-hidden="true">＋</span></button>}
+                  {project.url ? <a className="project-visit" href={project.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} 사이트 바로가기 (새 탭)`}>사이트 바로가기 <span aria-hidden="true">↗</span></a> : <span className="project-link-pending">사이트 링크 준비 중</span>}
+                </div>
+              </div>
               <div className="project-info"><div className="project-main"><h2>{project.title}</h2></div><div className="project-meta"><span>{project.category}</span><span>{project.year}</span></div></div>
             </article>)}
           </div>
         </section>
       </main>
+      {selectedProject && <ProjectStudy project={selectedProject} onClose={() => setSelectedProject(null)} />}
       <footer id="contact" className="reveal"><div className="footer-info"><span>윤서진</span><span>Programer</span><a href="mailto:22561067@kaywon.ac.kr">22561067@kaywon.ac.kr ↗</a></div><a href="#top" className="logo">PORTFOLIO</a></footer>
     </div>
   );
