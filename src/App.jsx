@@ -9,7 +9,7 @@ import raindropPreview from "./assets/raindrop-preview.png";
 import formePreview from "./assets/forme-preview.png";
 const projects = [
   { number: "01", title: "떡위키", description: "다양한 떡의 종류와 레시피, 보관법을 탐색하는 떡 정보 웹사이트", url: null, year: "2026", category: "WEB / JAVASCRIPT", image: tteokwikiPreview, imageAlt: "떡위키 메인 페이지 — 인기 떡과 추천 정보" },
-  { number: "02", title: "CHOCOBOWL", description: "Matter.js 충돌 계산과 Canvas 2D 렌더링으로 구현한 초코볼 게임 — 통의 회전·속도 보정·수집 판정으로 조작감을 설계", study: true, url: null, year: "2026", category: "GAME / JAVASCRIPT", image: chocobowlPreview, imageAlt: "CHOCOBOWL — 통을 회전시켜 초코볼을 담는 게임" },
+  { number: "02", title: "CHOCOBOWL", description: "Matter.js 충돌 계산과 Canvas 2D 렌더링으로 구현한 초코볼 게임 — 통의 회전·속도 보정·수집 판정으로 조작감을 설계", study: true, url: "https://22561067-coder.github.io/chocobowl/", year: "2026", category: "GAME / JAVASCRIPT", image: chocobowlPreview, imageAlt: "CHOCOBOWL — 통을 회전시켜 초코볼을 담는 게임" },
   { number: "03", title: "RAINDROP", description: "Three.js·GLSL로 표현한 수면 파문과 선택한 빗방울의 가속 낙하, Web Audio로 합성한 빗소리를 연결한 인터랙티브 웹 실험", study: true, url: "https://22561067-coder.github.io/raindrop/", year: "2025", category: "WEB / REACT", image: raindropPreview, imageAlt: "RAINDROP — 빗방울과 수면의 파문 인터랙션" },
   { number: "04", title: "FORME", description: "순수 JavaScript와 CSS로 구현한 양방향 포스터 트랙·스크롤 반응·포스터 편집과 SVG 저장 기능을 갖춘 디자인 플레이그라운드", study: true, url: "https://22561067-coder.github.io/forme/", year: "2025", category: "INTERACTION / JS", image: formePreview, imageAlt: "FORME — 타이포그래피와 그래픽 포스터로 구성한 디자인 플레이그라운드" },
 ];
