@@ -304,22 +304,6 @@ footer {
 }
 
 /* SKILLS */
-.skills {
-  padding: 60px 5vw 120px;
-}
-
-.skills-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 25px;
-  margin-bottom: 45px;
-  border-bottom: 1px solid #292929;
-  color: #888;
-  font-size: 11px;
-  letter-spacing: 2px;
-}
-
 .skills-list {
   display: flex;
   flex-direction: column;
@@ -384,10 +368,6 @@ footer {
 
 /* MOBILE */
 @media (max-width: 700px) {
-  .skills {
-    padding: 35px 5vw 80px;
-  }
-
   .skills-list {
     gap: 30px;
   }
@@ -398,17 +378,6 @@ footer {
 
   .skill-bar {
     height: 6px;
-  }
-}
-/* MOBILE */
-@media (max-width: 700px) {
-  .skills {
-    padding: 25px 5vw 70px;
-  }
-
-  .skills-list {
-    grid-template-columns: 1fr;
-    gap: 25px;
   }
 }
 

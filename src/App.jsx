@@ -13,7 +13,6 @@ const projects = [
   { number: "03", title: "RAINDROP", description: "Three.js·GLSL로 표현한 수면 파문과 선택한 빗방울의 가속 낙하, Web Audio로 합성한 빗소리를 연결한 인터랙티브 웹 실험", study: true, url: "https://22561067-coder.github.io/raindrop/", year: "2025", category: "WEB / REACT", image: raindropPreview, imageAlt: "RAINDROP — 빗방울과 수면의 파문 인터랙션" },
   { number: "04", title: "FORME", description: "순수 JavaScript와 CSS로 구현한 양방향 포스터 트랙·스크롤 반응·포스터 편집과 SVG 저장 기능을 갖춘 디자인 플레이그라운드", study: true, url: "https://22561067-coder.github.io/forme/", year: "2025", category: "INTERACTION / JS", image: formePreview, imageAlt: "FORME — 타이포그래피와 그래픽 포스터로 구성한 디자인 플레이그라운드" },
 ];
-const skills = [["HTML / CSS",35],["JAVASCRIPT",30],["REACT",25],["SVG",20],["UI / INTERACTION",55]];
 const motion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
 function Home() {
   const appRef = useRef(null);
@@ -23,12 +22,9 @@ function Home() {
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        const repeat = entry.target.matches(".skills-heading, .skill-item");
         if (entry.isIntersecting && entry.intersectionRatio >= 0.15) {
           entry.target.classList.add("is-visible");
-          if (!repeat) observer.unobserve(entry.target);
-        } else if (repeat && !entry.isIntersecting) {
-          entry.target.classList.remove("is-visible");
+          observer.unobserve(entry.target);
         }
       });
     }, { threshold: [0, 0.15] });
@@ -81,15 +77,6 @@ function Home() {
               <div className="project-info"><div className="project-main"><h2>{project.title}</h2></div><div className="project-meta"><span>{project.category}</span><span>{project.year}</span></div></div>
             </article>)}
           </div>
-        </section>
-        <section className="skills" id="about">
-          <div className="skills-heading reveal"><span>SKILLS</span></div>
-          <div className="skills-list">{skills.map(([name,level],index) => (
-            <div className="skill-item reveal" key={name} style={{"--delay":`${index * 65}ms`}}>
-              <div className="skill-info"><span>{name}</span><span>{level}%</span></div>
-              <div className="skill-bar"><div className="skill-level" style={{width:`${level}%`}} /></div>
-            </div>
-          ))}</div>
         </section>
       </main>
       {selectedProject && <ProjectStudy project={selectedProject} onClose={() => setSelectedProject(null)} />}
