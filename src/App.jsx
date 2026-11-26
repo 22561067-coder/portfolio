@@ -58,8 +58,8 @@ function Home() {
     <div className="app" ref={appRef} id="top">
       <Header />
       <main tabIndex={-1}>
-        <section className="hero">
-          <h1><span>BUILT BY DOING</span></h1>
+        <section className="hero home-hero">
+          <h1><span>IDEAS INTO</span> <span>MOTION</span></h1>
           <div className="hero-bottom"><p>윤서진<br/>2026 WEB PORTFOLIO</p><span className="graduation-note" lang="ko">2027년도 졸업 예정</span></div>
         </section>
         <section className="portfolio" id="work">
@@ -93,7 +93,7 @@ function Home() {
         </section>
       </main>
       {selectedProject && <ProjectStudy project={selectedProject} onClose={() => setSelectedProject(null)} />}
-      <footer id="contact" className="reveal"><div className="footer-info"><span>윤서진</span><span>Programer</span></div><a href="#top" className="logo">PORTFOLIO</a></footer>
+      <footer id="contact" className="reveal"><div className="footer-info"><span>윤서진</span><span>Programer</span></div></footer>
     </div>
   );
 }

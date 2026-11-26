@@ -52,6 +52,11 @@ export default function ProjectStudy({ project, onClose }) {
         <h3 id="study-programming">03 / 프로그래밍</h3>
 
         <div className="study-topic">
+          <h4>AI 활용과 결과물 개선</h4>
+          <p>{study.aiIteration}</p>
+        </div>
+
+        <div className="study-topic">
           <h4>핵심 기능</h4>
           {study.features.map(({ title, text }) => (
             <article className="study-item" key={title}>
