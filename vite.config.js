@@ -3,5 +3,5 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/portfolio-coder.github.io/',
+  base: '/portfolio/',
 })
